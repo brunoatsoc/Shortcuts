@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -14,12 +15,17 @@ type Configuration struct {
 	DBPort     string
 	ServerHost string
 	ServerPort string
+	JWTSecret  []byte
 }
 
 var Config = LoadEnvConfig()
 
 func LoadEnvConfig() Configuration {
-	godotenv.Load()
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Println("The .env file could not be loaded using system environment variables.")
+	}
 
 	return Configuration{
 		DBUser:     os.Getenv("DB_USER"),
@@ -29,5 +35,6 @@ func LoadEnvConfig() Configuration {
 		DBPort:     os.Getenv("DB_PORT"),
 		ServerHost: os.Getenv("SERVER_HOST"),
 		ServerPort: os.Getenv("SERVER_PORT"),
+		JWTSecret:  []byte(os.Getenv("JWT_SECRET")),
 	}
 }

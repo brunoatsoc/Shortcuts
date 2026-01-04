@@ -2,7 +2,7 @@ package service
 
 import (
 	"database/sql"
-	"intellisys-backend/types"
+	"intellisys-backend/internal/types"
 )
 
 type UsersService struct {
@@ -14,7 +14,7 @@ func NewUsersService(db *sql.DB) *UsersService {
 }
 
 func (s *UsersService) GetUserByUsername(user types.UsersRequest) (types.UsersResponse, error) {
-	sqlStmt := `SELECT username FROM users WHERE username=$1`
+	sqlStmt := `SELECT id, username, password FROM users WHERE username=$1`
 
 	uResponse := new(types.UsersResponse)
 
@@ -22,7 +22,9 @@ func (s *UsersService) GetUserByUsername(user types.UsersRequest) (types.UsersRe
 		sqlStmt,
 		user.Username,
 	).Scan(
+		&uResponse.ID,
 		&uResponse.Username,
+		&uResponse.Password,
 	)
 
 	if err != nil {

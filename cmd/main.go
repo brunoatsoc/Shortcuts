@@ -1,8 +1,8 @@
 package main
 
 import (
-	"intellisys-backend/cmd/api"
-	"intellisys-backend/db"
+	"intellisys-backend/api"
+	"intellisys-backend/internal/db"
 	"log"
 )
 

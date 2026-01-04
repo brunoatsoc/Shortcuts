@@ -2,7 +2,7 @@ package service
 
 import (
 	"database/sql"
-	"intellisys-backend/types"
+	"intellisys-backend/internal/types"
 )
 
 type ShortcutService struct {

@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"intellisys-backend/types"
+	"intellisys-backend/internal/middlewares"
+	"intellisys-backend/internal/types"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +17,16 @@ func NewShortcutController(service types.ShortcutsInterface) *ShortcutController
 }
 
 func (c *ShortcutController) RegisterRoutes(g *gin.Engine) {
-	g.POST("shortcut", c.createShortcut)
 	g.GET("shortcut", c.getAllShortcuts)
-	g.PUT("shortcut/:id", c.updateShortcut)
-	g.DELETE("shortcut/:id", c.deleteShortcut)
+
+	auth := g.Group("/")
+
+	auth.Use(middlewares.AuthMiddleware())
+	{
+		auth.POST("shortcut", c.createShortcut)
+		auth.PUT("shortcut/:id", c.updateShortcut)
+		auth.DELETE("shortcut/:id", c.deleteShortcut)
+	}
 }
 
 func (c *ShortcutController) createShortcut(ctx *gin.Context) {
