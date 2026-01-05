@@ -4,6 +4,7 @@ type ShortcutsRequest struct {
 	Name        string `json:"name"`
 	URL         string `json:"url"`
 	Description string `json:"description"`
+	ImageURL    string `json:"image_url"`
 }
 
 type ShortcutsResponse struct {
@@ -11,6 +12,7 @@ type ShortcutsResponse struct {
 	Name        string `json:"name"`
 	URL         string `json:"url"`
 	Description string `json:"description"`
+	ImageURL    string `json:"image_url"`
 }
 
 type ShortcutsInterface interface {

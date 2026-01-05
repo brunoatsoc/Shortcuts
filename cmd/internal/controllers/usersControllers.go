@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-	"intellisys-backend/internal/configuration"
 	"intellisys-backend/internal/service"
 	"intellisys-backend/internal/types"
 	"strconv"
@@ -25,18 +23,13 @@ func (c *UsersController) RegisterRoutes(r *gin.Engine) {
 func (c *UsersController) login(ctx *gin.Context) {
 	var user types.UsersRequest
 
-	fmt.Println(configuration.Config)
-
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(400, gin.H{"error": "Invalid data"})
 		return
 	}
 
-	fmt.Println(user)
-
 	dbUser, err := c.usersService.GetUserByUsername(user)
 
-	fmt.Println(dbUser)
 	if err != nil {
 		ctx.JSON(401, gin.H{"error": "Invalid User or Password"})
 		return
@@ -48,6 +41,7 @@ func (c *UsersController) login(ctx *gin.Context) {
 	}
 
 	token, err := service.GenerateToken(strconv.Itoa(dbUser.ID), dbUser.Username)
+
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Error generating token"})
 		return

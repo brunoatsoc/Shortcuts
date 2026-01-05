@@ -13,8 +13,10 @@ func NewShortcutService(db *sql.DB) *ShortcutService {
 	return &ShortcutService{db: db}
 }
 
+// CREATE
 func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types.ShortcutsResponse, error) {
-	sqlStmt := `INSERT INTO shortcuts (name, url, description) VALUES ($1, $2, $3) RETURNING id, name, url, description`
+	// Adicionei image_url na query
+	sqlStmt := `INSERT INTO shortcuts (name, url, description, image_url) VALUES ($1, $2, $3, $4) RETURNING id, name, url, description, image_url`
 
 	sResponse := new(types.ShortcutsResponse)
 
@@ -23,11 +25,13 @@ func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types
 		shortcut.Name,
 		shortcut.URL,
 		shortcut.Description,
+		shortcut.ImageURL, // Passando o novo campo
 	).Scan(
 		&sResponse.ID,
 		&sResponse.Name,
 		&sResponse.URL,
 		&sResponse.Description,
+		&sResponse.ImageURL, // Lendo o novo campo de volta
 	)
 
 	if err != nil {
@@ -37,8 +41,10 @@ func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types
 	return *sResponse, nil
 }
 
+// GET ALL
 func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
-	sqlStmt := `SELECT id, name, url, description FROM shortcuts order by created_at desc`
+	// Adicionei COALESCE para evitar erro se o campo for NULL no banco antigo
+	sqlStmt := `SELECT id, name, url, description, COALESCE(image_url, '') FROM shortcuts order by created_at desc`
 
 	rows, err := s.db.Query(sqlStmt)
 
@@ -57,6 +63,7 @@ func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
 			&shortcut.Name,
 			&shortcut.URL,
 			&shortcut.Description,
+			&shortcut.ImageURL, // Lendo o novo campo
 		)
 
 		if err != nil {
@@ -69,8 +76,10 @@ func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
 	return shortcuts, nil
 }
 
+// UPDATE
 func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest) (types.ShortcutsResponse, error) {
-	sqlStmt := `UPDATE shortcuts SET name=$1, url=$2, description=$3 WHERE id=$4 RETURNING id, name, url, description`
+	// Atualizei a query de Update
+	sqlStmt := `UPDATE shortcuts SET name=$1, url=$2, description=$3, image_url=$4 WHERE id=$5 RETURNING id, name, url, description, image_url`
 
 	sResponse := new(types.ShortcutsResponse)
 	err := s.db.QueryRow(
@@ -78,12 +87,14 @@ func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest
 		shortcut.Name,
 		shortcut.URL,
 		shortcut.Description,
-		id,
+		shortcut.ImageURL, // Novo campo
+		id,                // O ID agora é o 5º parametro ($5)
 	).Scan(
 		&sResponse.ID,
 		&sResponse.Name,
 		&sResponse.URL,
 		&sResponse.Description,
+		&sResponse.ImageURL,
 	)
 
 	if err != nil {
@@ -93,6 +104,7 @@ func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest
 	return *sResponse, nil
 }
 
+// DELETE (Não muda nada)
 func (s *ShortcutService) DeleteShortcut(id int) error {
 	sqlStmt := `DELETE FROM shortcuts WHERE id=$1`
 	_, err := s.db.Exec(sqlStmt, id)

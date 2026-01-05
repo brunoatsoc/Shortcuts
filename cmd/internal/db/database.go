@@ -9,8 +9,6 @@ import (
 )
 
 func NewConnectionDB() (*sql.DB, error) {
-	str := connectionStringPostgres()
-	fmt.Println("Connection String:", str) // Linha de depuração
 	db, err := sql.Open("postgres", connectionStringPostgres())
 
 	if err != nil {
