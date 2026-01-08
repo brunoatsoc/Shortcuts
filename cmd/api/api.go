@@ -6,7 +6,6 @@ import (
 	"intellisys-backend/internal/controllers"
 	"intellisys-backend/internal/service"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,13 +20,13 @@ func NewServerAPI(db *sql.DB) *ServerAPI {
 func (s *ServerAPI) RunServer() error {
 	r := gin.Default()
 
-	r.Use(cors.New(cors.Config{
+	/*r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"}, // URL do Vite React
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-	}))
+	}))*/
 
 	shortcutService := service.NewShortcutService(s.db)
 	shortcutController := controllers.NewShortcutController(shortcutService)
