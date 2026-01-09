@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Middleware para autenticação usando JWT
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
@@ -20,6 +21,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		parts := strings.Split(authHeader, " ")
+
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			ctx.Abort()
@@ -40,4 +42,4 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		ctx.Next()
 	}
-}
+} // Fim AuthMiddleware

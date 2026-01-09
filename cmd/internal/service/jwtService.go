@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Método para gerar um token JWT
 func GenerateToken(userID string, username string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":      userID,
@@ -16,4 +17,4 @@ func GenerateToken(userID string, username string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(configuration.Config.JWTSecret)
-}
+} // Fim GenerateToken

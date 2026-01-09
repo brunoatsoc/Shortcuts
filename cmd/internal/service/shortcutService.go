@@ -13,10 +13,9 @@ func NewShortcutService(db *sql.DB) *ShortcutService {
 	return &ShortcutService{db: db}
 }
 
-// CREATE
+// Método para criar um novo atalho
 func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types.ShortcutsResponse, error) {
-	// Adicionei image_url na query
-	sqlStmt := `INSERT INTO shortcuts (name, url, description, image_url) VALUES ($1, $2, $3, $4) RETURNING id, name, url, description, image_url`
+	sqlStmt := `INSERT INTO shortcuts (name, url, image_url) VALUES ($1, $2, $3) RETURNING id, name, url, image_url`
 
 	sResponse := new(types.ShortcutsResponse)
 
@@ -24,14 +23,12 @@ func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types
 		sqlStmt,
 		shortcut.Name,
 		shortcut.URL,
-		shortcut.Description,
-		shortcut.ImageURL, // Passando o novo campo
+		shortcut.ImageURL,
 	).Scan(
 		&sResponse.ID,
 		&sResponse.Name,
 		&sResponse.URL,
-		&sResponse.Description,
-		&sResponse.ImageURL, // Lendo o novo campo de volta
+		&sResponse.ImageURL,
 	)
 
 	if err != nil {
@@ -39,12 +36,11 @@ func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types
 	}
 
 	return *sResponse, nil
-}
+} // Fim CreateShortcut
 
-// GET ALL
+// Método para obter todos os atalhos
 func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
-	// Adicionei COALESCE para evitar erro se o campo for NULL no banco antigo
-	sqlStmt := `SELECT id, name, url, description, COALESCE(image_url, '') FROM shortcuts order by created_at desc`
+	sqlStmt := `SELECT id, name, url, COALESCE(image_url, '') FROM shortcuts order by created_at desc`
 
 	rows, err := s.db.Query(sqlStmt)
 
@@ -62,8 +58,7 @@ func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
 			&shortcut.ID,
 			&shortcut.Name,
 			&shortcut.URL,
-			&shortcut.Description,
-			&shortcut.ImageURL, // Lendo o novo campo
+			&shortcut.ImageURL,
 		)
 
 		if err != nil {
@@ -74,26 +69,23 @@ func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
 	}
 
 	return shortcuts, nil
-}
+} // Fim GetAllShortcuts
 
-// UPDATE
+// Método para atualizar um atalho existente
 func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest) (types.ShortcutsResponse, error) {
-	// Atualizei a query de Update
-	sqlStmt := `UPDATE shortcuts SET name=$1, url=$2, description=$3, image_url=$4 WHERE id=$5 RETURNING id, name, url, description, image_url`
+	sqlStmt := `UPDATE shortcuts SET name=$1, url=$2, image_url=$3 WHERE id=$4 RETURNING id, name, url, image_url`
 
 	sResponse := new(types.ShortcutsResponse)
 	err := s.db.QueryRow(
 		sqlStmt,
 		shortcut.Name,
 		shortcut.URL,
-		shortcut.Description,
-		shortcut.ImageURL, // Novo campo
-		id,                // O ID agora é o 5º parametro ($5)
+		shortcut.ImageURL,
+		id,
 	).Scan(
 		&sResponse.ID,
 		&sResponse.Name,
 		&sResponse.URL,
-		&sResponse.Description,
 		&sResponse.ImageURL,
 	)
 
@@ -102,11 +94,11 @@ func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest
 	}
 
 	return *sResponse, nil
-}
+} // Fim UpdateShortcut
 
-// DELETE (Não muda nada)
+// Método para deletar um atalho pelo ID
 func (s *ShortcutService) DeleteShortcut(id int) error {
 	sqlStmt := `DELETE FROM shortcuts WHERE id=$1`
 	_, err := s.db.Exec(sqlStmt, id)
 	return err
-}
+} // Fim DeleteShortcut

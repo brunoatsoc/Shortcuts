@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Estrutura para armazenar as configurações da aplicação
 type Configuration struct {
 	DBUser     string
 	DBPassword string
@@ -18,8 +19,9 @@ type Configuration struct {
 	JWTSecret  []byte
 }
 
-var Config = LoadEnvConfig()
+var Config = LoadEnvConfig() // Carrega as configurações do ambiente
 
+// Função para carregar as variáveis de ambiente e retornar a configuração
 func LoadEnvConfig() Configuration {
 	err := godotenv.Load()
 
@@ -37,4 +39,4 @@ func LoadEnvConfig() Configuration {
 		ServerPort: os.Getenv("SERVER_PORT"),
 		JWTSecret:  []byte(os.Getenv("JWT_SECRET")),
 	}
-}
+} // Fim LoadEnvConfig

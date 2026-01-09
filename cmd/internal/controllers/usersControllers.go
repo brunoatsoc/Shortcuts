@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"intellisys-backend/internal/service"
 	"intellisys-backend/internal/types"
 	"strconv"
@@ -16,10 +17,12 @@ func NewUsersController(usersService types.UsersInterface) *UsersController {
 	return &UsersController{usersService: usersService}
 }
 
+// Método para registrar as rotas de usuário
 func (c *UsersController) RegisterRoutes(r *gin.Engine) {
 	r.POST("/login", c.login)
-}
+} // Fim RegisterRoutes
 
+// Método para login do usuário
 func (c *UsersController) login(ctx *gin.Context) {
 	var user types.UsersRequest
 
@@ -47,7 +50,9 @@ func (c *UsersController) login(ctx *gin.Context) {
 		return
 	}
 
+	fmt.Printf(token)
+
 	ctx.JSON(200, gin.H{
 		"token": token,
 	})
-}
+} // Fim login

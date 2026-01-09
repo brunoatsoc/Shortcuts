@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Função para criar uma nova conexão com o banco de dados
 func NewConnectionDB() (*sql.DB, error) {
 	db, err := sql.Open("postgres", connectionStringPostgres())
 
@@ -20,8 +21,9 @@ func NewConnectionDB() (*sql.DB, error) {
 	}
 
 	return db, nil
-}
+} // Fim NewConnectionDB
 
+// Função para montar a string de conexão com o Postgres
 func connectionStringPostgres() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", configuration.Config.DBHost, configuration.Config.DBUser, configuration.Config.DBPassword, configuration.Config.DBName, configuration.Config.DBPort)
-}
+} // Fim connectionStringPostgres

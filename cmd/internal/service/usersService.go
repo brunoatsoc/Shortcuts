@@ -13,6 +13,7 @@ func NewUsersService(db *sql.DB) *UsersService {
 	return &UsersService{db: db}
 }
 
+// Método para obter usuário pelo nome de usuário
 func (s *UsersService) GetUserByUsername(user types.UsersRequest) (types.UsersResponse, error) {
 	sqlStmt := `SELECT id, username, password FROM users WHERE username=$1`
 
@@ -32,4 +33,4 @@ func (s *UsersService) GetUserByUsername(user types.UsersRequest) (types.UsersRe
 	}
 
 	return *uResponse, nil
-}
+} // Fim GetUserByUsername

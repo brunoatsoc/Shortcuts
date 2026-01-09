@@ -1,20 +1,21 @@
 package types
 
+// Struct para pegar requisição de atalho
 type ShortcutsRequest struct {
-	Name        string `json:"name"`
-	URL         string `json:"url"`
-	Description string `json:"description"`
-	ImageURL    string `json:"image_url"`
+	Name     string `json:"name"`
+	URL      string `json:"url"`
+	ImageURL string `json:"image_url"`
 }
 
+// Struct para resposta de atalho
 type ShortcutsResponse struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	URL         string `json:"url"`
-	Description string `json:"description"`
-	ImageURL    string `json:"image_url"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	URL      string `json:"url"`
+	ImageURL string `json:"image_url"`
 }
 
+// Interface para manipulação dos atalhos
 type ShortcutsInterface interface {
 	CreateShortcut(shortcut ShortcutsRequest) (ShortcutsResponse, error)
 	GetAllShortcuts() ([]ShortcutsResponse, error)
