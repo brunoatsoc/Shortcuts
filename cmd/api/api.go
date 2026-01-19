@@ -6,7 +6,6 @@ import (
 	"intellisys-backend/internal/controllers"
 	"intellisys-backend/internal/service"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,13 +22,13 @@ func (s *ServerAPI) RunServer() error {
 	r := gin.Default()
 
 	// Configuração CORS
-	r.Use(cors.New(cors.Config{
+	/*r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"}, // URL do Vite React
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-	}))
+	}))*/
 
 	// Registrar controladores e rotas para atalhos
 	shortcutService := service.NewShortcutService(s.db)

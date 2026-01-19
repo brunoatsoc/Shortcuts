@@ -2,8 +2,8 @@ package types
 
 // Struct para pegar requisição de atalho
 type ShortcutsRequest struct {
-	Name     string `json:"name"`
-	URL      string `json:"url"`
+	Name     string `json:"name" form:"name"`
+	URL      string `json:"url" form:"url"`
 	ImageURL string `json:"image_url" form:"image_url"`
 }
 
