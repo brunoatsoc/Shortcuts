@@ -2,7 +2,10 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"intellisys-backend/internal/types"
+	"os"
+	"strings"
 )
 
 type ShortcutService struct {
@@ -73,7 +76,11 @@ func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
 
 // Método para atualizar um atalho existente
 func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest) (types.ShortcutsResponse, error) {
+	var oldImageUrl string
+	_ = s.db.QueryRow("SELECT COALESCE(image_url, '') FROM shortcuts WHERE id=$1", id).Scan(&oldImageUrl)
 	sqlStmt := `UPDATE shortcuts SET name=$1, url=$2, image_url=$3 WHERE id=$4 RETURNING id, name, url, image_url`
+
+	fmt.Println(oldImageUrl)
 
 	sResponse := new(types.ShortcutsResponse)
 	err := s.db.QueryRow(
@@ -93,12 +100,35 @@ func (s *ShortcutService) UpdateShortcut(id int, shortcut types.ShortcutsRequest
 		return types.ShortcutsResponse{}, err
 	}
 
+	if oldImageUrl != "" && shortcut.ImageURL != oldImageUrl && !strings.HasPrefix(oldImageUrl, "http") {
+		filePath := "." + oldImageUrl
+		_ = os.Remove(filePath) // Deleta o arquivo antigo do disco
+	}
+
 	return *sResponse, nil
 } // Fim UpdateShortcut
 
-// Método para deletar um atalho pelo ID
+// Método para deletar um atalho pelo ID e remover o arquivo
 func (s *ShortcutService) DeleteShortcut(id int) error {
-	sqlStmt := `DELETE FROM shortcuts WHERE id=$1`
-	_, err := s.db.Exec(sqlStmt, id)
-	return err
+	var imageUrl string
+	query := "SELECT COALESCE(image_url, '') FROM shortcuts WHERE id = $1"
+	err := s.db.QueryRow(query, id).Scan(&imageUrl)
+
+	if err != nil {
+		return err
+	}
+
+	sqlStmt := "DELETE FROM shortcuts WHERE id=$1"
+	_, err = s.db.Exec(sqlStmt, id)
+
+	if err != nil {
+		return err
+	}
+
+	if imageUrl != "" && !strings.HasPrefix(imageUrl, "http") {
+		filePath := "." + imageUrl
+		_ = os.Remove(filePath)
+	}
+
+	return nil
 } // Fim DeleteShortcut
