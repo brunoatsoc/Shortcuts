@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"intellisys-backend/internal/service"
 	"intellisys-backend/internal/types"
 	"strconv"
@@ -49,8 +48,6 @@ func (c *UsersController) login(ctx *gin.Context) {
 		ctx.JSON(500, gin.H{"error": "Error generating token"})
 		return
 	}
-
-	fmt.Printf(token)
 
 	ctx.JSON(200, gin.H{
 		"token": token,

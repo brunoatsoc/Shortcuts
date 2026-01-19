@@ -4,7 +4,7 @@ package types
 type ShortcutsRequest struct {
 	Name     string `json:"name"`
 	URL      string `json:"url"`
-	ImageURL string `json:"image_url"`
+	ImageURL string `json:"image_url" form:"image_url"`
 }
 
 // Struct para resposta de atalho
