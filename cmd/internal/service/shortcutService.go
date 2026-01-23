@@ -43,7 +43,7 @@ func (s *ShortcutService) CreateShortcut(shortcut types.ShortcutsRequest) (types
 
 // Método para obter todos os atalhos
 func (s *ShortcutService) GetAllShortcuts() ([]types.ShortcutsResponse, error) {
-	sqlStmt := `SELECT id, name, url, COALESCE(image_url, '') FROM shortcuts order by created_at desc`
+	sqlStmt := `SELECT id, name, url, COALESCE(image_url, '') FROM shortcuts order by created_at asc`
 
 	rows, err := s.db.Query(sqlStmt)
 
