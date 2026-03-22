@@ -1,0 +1,8 @@
+*.sql
+.env
+*.pem
+*.exe
+bin/
+seed/
+web/
+uploads/
