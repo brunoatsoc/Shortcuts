@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"intellisys-backend/internal/domain/user"
 	"intellisys-backend/internal/infra/security"
 	"net/http"
 	"strings"
@@ -9,12 +10,14 @@ import (
 )
 
 type AuthMidware struct {
-	jwtService *security.JWTService
+	jwtService  *security.JWTService
+	userService *user.UserService
 }
 
-func NewAuthMidware(jwtService *security.JWTService) *AuthMidware {
+func NewAuthMidware(jwtService *security.JWTService, userService *user.UserService) *AuthMidware {
 	return &AuthMidware{
-		jwtService: jwtService,
+		jwtService:  jwtService,
+		userService: userService,
 	}
 }
 
@@ -32,6 +35,12 @@ func (a *AuthMidware) AuthenticationMidware() gin.HandlerFunc {
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token inválido"})
+			return
+		}
+
+		err = a.userService.ExistsUserById(c.Request.Context(), claims.UserId)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "usuário não existe"})
 			return
 		}
 

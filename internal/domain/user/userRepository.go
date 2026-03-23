@@ -12,5 +12,6 @@ type UserRepository interface {
 	FindById(ctx context.Context, userId uuid.UUID) (*User, error)
 	FindAll(ctx context.Context) ([]*User, error)
 	FindByName(ctx context.Context, name string) (*User, error)
+	ExistsId(ctx context.Context, userId uuid.UUID) (bool, error)
 	ExistsNameExcludingId(ctx context.Context, name string, userId uuid.UUID) (bool, error)
 }

@@ -146,6 +146,24 @@ func (r *UserRepository) ExistsNameExcludingId(ctx context.Context, name string,
 	return exists, nil
 }
 
+func (r *UserRepository) ExistsId(ctx context.Context, userId uuid.UUID) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1 FROM users
+			WHERE id = $1
+		)
+	`
+
+	var exists bool
+
+	err := r.pool.QueryRow(ctx, query, userId).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("erro ao verificar existência id: %w", err)
+	}
+
+	return exists, nil
+}
+
 func (r *UserRepository) Delete(ctx context.Context, userId uuid.UUID) error {
 	query := `
 		DELETE FROM users

@@ -121,3 +121,21 @@ func (s *UserService) GetAll(ctx context.Context) ([]*dto.UserResponseDTO, error
 
 	return response, nil
 }
+
+func (s *UserService) ExistsUserById(ctx context.Context, id string) error {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return fmt.Errorf("UUID do usuário inválido: %v", err)
+	}
+
+	exists, err := s.repository.ExistsId(ctx, userUUID)
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		return fmt.Errorf("usuário não existe")
+	}
+
+	return nil
+}
