@@ -25,6 +25,13 @@ services:
 
   app:
     build: .
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
     restart: always
 
     depends_on:

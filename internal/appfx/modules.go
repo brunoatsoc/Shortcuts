@@ -4,9 +4,11 @@ import (
 	"intellisys-backend/internal/api/controller"
 	"intellisys-backend/internal/api/httpserver"
 	"intellisys-backend/internal/api/middleware"
+	"intellisys-backend/internal/domain/log"
 	"intellisys-backend/internal/domain/shortcut"
 	"intellisys-backend/internal/domain/user"
 	"intellisys-backend/internal/infra/config"
+	"intellisys-backend/internal/infra/logger"
 	"intellisys-backend/internal/infra/persistence/postgres"
 	"intellisys-backend/internal/infra/security"
 	"intellisys-backend/internal/infra/storage"
@@ -22,8 +24,8 @@ var ConfigModule = fx.Module("config",
 var PostgresModule = fx.Module("postgres",
 	fx.Provide(
 		postgres.NewPool,
-		fx.Annotate(postgres.NewShortcutRepository, fx.As(new(shortcut.ShortcutRepository))),
 		fx.Annotate(postgres.NewUserRepository, fx.As(new(user.UserRepository))),
+		fx.Annotate(postgres.NewShortcutRepository, fx.As(new(shortcut.ShortcutRepository))),
 	),
 )
 
@@ -57,5 +59,11 @@ var APIModule = fx.Module("api",
 var FileModlule = fx.Module("file",
 	fx.Provide(
 		fx.Annotate(storage.NewLocalStorage, fx.As(new(shortcut.FileStorage))),
+	),
+)
+
+var LogglerModule = fx.Module("logger",
+	fx.Provide(
+		fx.Annotate(logger.NewLogger, fx.As(new(log.Logger))),
 	),
 )

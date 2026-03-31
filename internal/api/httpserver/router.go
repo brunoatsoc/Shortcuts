@@ -3,6 +3,7 @@ package httpserver
 import (
 	"intellisys-backend/internal/api/controller"
 	"intellisys-backend/internal/api/middleware"
+	"intellisys-backend/internal/domain/log"
 	"intellisys-backend/internal/domain/user"
 	"intellisys-backend/internal/infra/config"
 	"time"
@@ -17,6 +18,7 @@ func NewRouter(
 	authController *controller.AuthController,
 	authMiddleware *middleware.AuthMidware,
 	cfg *config.Config,
+	log log.Logger,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -32,6 +34,7 @@ func NewRouter(
 	}))
 
 	router.Use(middleware.RateLimitMiddleware())
+	router.Use(middleware.LoggingMiddleware(log))
 
 	setupShortcutRoutes(router, shortcutController, authMiddleware)
 	setupUsuarioRoutes(router, userConstroller, authMiddleware)

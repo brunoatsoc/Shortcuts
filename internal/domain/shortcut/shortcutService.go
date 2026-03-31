@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"intellisys-backend/internal/api/dto"
+	"intellisys-backend/internal/domain/log"
 	"intellisys-backend/internal/infra/config"
 
 	"github.com/google/uuid"
@@ -13,17 +14,20 @@ type ShortcutService struct {
 	repository   ShortcutRepository
 	storageImage FileStorage
 	urlServer    string
+	log          log.Logger
 }
 
-func NewshortcutService(repository ShortcutRepository, storeImage FileStorage, cfg *config.Config) *ShortcutService {
+func NewshortcutService(repository ShortcutRepository, storeImage FileStorage, cfg *config.Config, log log.Logger) *ShortcutService {
 	return &ShortcutService{
 		repository:   repository,
 		storageImage: storeImage,
 		urlServer:    "http://" + cfg.Server.Host + ":" + cfg.Server.Port,
+		log:          log,
 	}
 }
 
 func (s *ShortcutService) CreateShortcut(ctx context.Context, request dto.ShortcutCreateDTO) (*dto.ShortcutResponseDTO, error) {
+	s.log.Debug("Convertendo tipo do shortcut", "teste")
 	shortcutType, err := ParseShortcutType(request.ShortcutType)
 
 	if err != nil {
@@ -105,6 +109,8 @@ func (s *ShortcutService) UpdateShortcut(ctx context.Context, request dto.Shortc
 }
 
 func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutResponseDTO, error) {
+	s.log.Info("Obtendo Shortcuts", "Teste", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
 	shortcuts, err := s.repository.FindAll(ctx)
 	if err != nil {
 		return nil, err

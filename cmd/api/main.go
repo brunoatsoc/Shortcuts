@@ -17,6 +17,7 @@ func main() {
 		appfx.DomainModule,
 		appfx.APIModule,
 		appfx.FileModlule,
+		appfx.LogglerModule,
 
 		fx.Invoke(middleware.StartRateLimitCleanup),
 
