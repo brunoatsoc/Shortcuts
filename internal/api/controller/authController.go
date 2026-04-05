@@ -27,7 +27,7 @@ func (a *AuthController) Login(ctx *gin.Context) {
 	}
 
 	if req.Name == nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "email é obrigatório"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "nome é obrigatório"})
 		return
 	}
 
@@ -36,12 +36,27 @@ func (a *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := a.authService.Authenticate(ctx, *req.Name, *req.Password)
+	loggedUser, token, err := a.authService.Authenticate(ctx, *req.Name, *req.Password)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"token": token})
+	a.setAccessTokenCookie(ctx, *token)
+
+	ctx.JSON(http.StatusOK, loggedUser)
+}
+
+func (a *AuthController) setAccessTokenCookie(ctx *gin.Context, token string) {
+	ctx.SetSameSite(http.SameSiteStrictMode) // 👈 deve vir antes do SetCookie
+	ctx.SetCookie(
+		"access_token",
+		token,
+		15*60, // 15 minutos em segundos
+		"/",
+		"",
+		true, // Secure: só HTTPS
+		true, // HttpOnly: JS não acessa
+	)
 }

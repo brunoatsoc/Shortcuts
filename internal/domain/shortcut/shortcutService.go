@@ -27,7 +27,7 @@ func NewshortcutService(repository ShortcutRepository, storeImage FileStorage, c
 }
 
 func (s *ShortcutService) CreateShortcut(ctx context.Context, request dto.ShortcutCreateDTO) (*dto.ShortcutResponseDTO, error) {
-	s.log.Debug("Convertendo tipo do shortcut", "teste")
+	s.log.Info("Convertendo tipo do shortcut")
 	shortcutType, err := ParseShortcutType(request.ShortcutType)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (s *ShortcutService) UpdateShortcut(ctx context.Context, request dto.Shortc
 }
 
 func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutResponseDTO, error) {
-	s.log.Info("Obtendo Shortcuts", "Teste", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+	s.log.Info("Obtendo Shortcuts")
 
 	shortcuts, err := s.repository.FindAll(ctx)
 	if err != nil {
