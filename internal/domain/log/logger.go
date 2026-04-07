@@ -7,4 +7,6 @@ type Logger interface {
 	Debug(msg string, args ...any)
 	With(args ...any) Logger
 	Fatal(msg string, args ...any)
+
+	Sync() error
 }

@@ -109,7 +109,7 @@ func (s *ShortcutService) UpdateShortcut(ctx context.Context, request dto.Shortc
 }
 
 func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutResponseDTO, error) {
-	s.log.Info("Obtendo Shortcuts")
+	s.log.Info("Obtendo Shortcuts", "TESTE")
 
 	shortcuts, err := s.repository.FindAll(ctx)
 	if err != nil {
