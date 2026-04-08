@@ -35,5 +35,5 @@ type ShortcutResponseDTO struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
 	ImageURL string `json:"image_url"`
-	Link     string `form:"link"`
+	Link     string `json:"link"`
 }

@@ -1,16 +1,16 @@
 package dto
 
 type UserRequestDTO struct {
-	Name     *string `form:"name"`
-	Password *string `form:"password"`
+	Name     *string `json:"name"`
+	Password *string `json:"password"`
 }
 
 type UserResponseDTO struct {
-	Id   string `form:"id"`
-	Name string `form:"name"`
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type LoginRequestDTO struct {
-	Name     *string `form:"name"`
-	Password *string `form:"password"`
+	Name     *string `json:"name"`
+	Password *string `json:"password"`
 }
