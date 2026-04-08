@@ -40,7 +40,7 @@ func (s *ShortcutService) CreateShortcut(ctx context.Context, request dto.Shortc
 		return nil, err
 	}
 
-	newShortcut, err := NewShortcut(request.Name, fileName, shortcutType)
+	newShortcut, err := NewShortcut(request.Name, fileName, request.Link, shortcutType)
 
 	if err != nil {
 		_ = s.storageImage.Delete(fileName)
@@ -57,6 +57,7 @@ func (s *ShortcutService) CreateShortcut(ctx context.Context, request dto.Shortc
 	return &dto.ShortcutResponseDTO{
 		Id:       shortcutSaved.Id.String(),
 		Name:     shortcutSaved.Name,
+		Link:     shortcutSaved.Link,
 		ImageURL: "/uploads/" + shortcutSaved.ImageUrl,
 	}, nil
 }
@@ -84,7 +85,7 @@ func (s *ShortcutService) UpdateShortcut(ctx context.Context, request dto.Shortc
 		newImageName = &fileName
 	}
 
-	err = shortcutFound.UpdateShortcut(request.Name, newImageName)
+	err = shortcutFound.UpdateShortcut(request.Name, newImageName, request.Link)
 	if err != nil {
 		if newImageName != nil {
 			_ = s.storageImage.Delete(*newImageName)
@@ -122,6 +123,7 @@ func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutR
 		response = append(response, &dto.ShortcutResponseDTO{
 			Id:       sc.Id.String(),
 			Name:     sc.Name,
+			Link:     sc.Link,
 			ImageURL: s.urlServer + "/uploads/" + sc.ImageUrl,
 		})
 	}

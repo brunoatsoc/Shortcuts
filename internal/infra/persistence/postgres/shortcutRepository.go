@@ -21,14 +21,15 @@ func NewShortcutRepository(pool *pgxpool.Pool) *ShortcutRepository {
 
 func (r *ShortcutRepository) Store(ctx context.Context, shortcut *shortcut.Shortcut) (*shortcut.Shortcut, error) {
 	query := `
-		INSERT INTO shortcuts (name, image_url, shortcut_type)
-		VALUES ($1, $2, $3)
+		INSERT INTO shortcuts (name, link, image_url, shortcut_type)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, updated_at
 	`
 
 	err := r.pool.QueryRow(ctx,
 		query,
 		shortcut.Name,
+		shortcut.Link,
 		shortcut.ImageUrl,
 		string(shortcut.ShortcutType),
 	).Scan(
@@ -46,7 +47,7 @@ func (r *ShortcutRepository) Store(ctx context.Context, shortcut *shortcut.Short
 
 func (r *ShortcutRepository) FindById(ctx context.Context, id uuid.UUID) (*shortcut.Shortcut, error) {
 	query := `
-		SELECT id, name, image_url, shortcut_type, created_at, updated_at
+		SELECT id, name, link, image_url, shortcut_type, created_at, updated_at
 		FROM shortcuts
 		WHERE id = $1
 	`
@@ -56,6 +57,7 @@ func (r *ShortcutRepository) FindById(ctx context.Context, id uuid.UUID) (*short
 	err := r.pool.QueryRow(ctx, query, id).Scan(
 		&shortcut.Id,
 		&shortcut.Name,
+		&shortcut.Link,
 		&shortcut.ImageUrl,
 		&shortcut.ShortcutType,
 		&shortcut.CreatedAt,
@@ -74,7 +76,7 @@ func (r *ShortcutRepository) FindById(ctx context.Context, id uuid.UUID) (*short
 
 func (r *ShortcutRepository) FindAll(ctx context.Context) ([]*shortcut.Shortcut, error) {
 	query := `
-		SELECT id, name, image_url, shortcut_type, created_at, updated_at
+		SELECT id, name, link, image_url, shortcut_type, created_at, updated_at
 		FROM shortcuts
 		ORDER BY created_at DESC
 	`
@@ -94,6 +96,7 @@ func (r *ShortcutRepository) FindAll(ctx context.Context) ([]*shortcut.Shortcut,
 		err := rows.Scan(
 			&s.Id,
 			&s.Name,
+			&s.Link,
 			&s.ImageUrl,
 			&shortcutType,
 			&s.CreatedAt,
@@ -120,15 +123,17 @@ func (r *ShortcutRepository) Update(ctx context.Context, shortcut *shortcut.Shor
 		UPDATE shortcuts
 		SET name = $1,
 		    image_url = $2,
-		    shortcut_type = $3,
+			link = $3,
+		    shortcut_type = $4,
 		    updated_at = NOW()
-		WHERE id = $4
+		WHERE id = $5
 	`
 
 	cmdTag, err := r.pool.Exec(
 		ctx,
 		query,
 		shortcut.Name,
+		shortcut.Link,
 		shortcut.ImageUrl,
 		string(shortcut.ShortcutType),
 		shortcut.Id,

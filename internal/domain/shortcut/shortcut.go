@@ -12,6 +12,7 @@ import (
 type Shortcut struct {
 	Id           uuid.UUID
 	Name         string
+	Link         string
 	ImageUrl     string
 	ShortcutType ShortcutType
 	CreatedAt    time.Time
@@ -21,6 +22,7 @@ type Shortcut struct {
 var (
 	ErrorEmptyName     = errors.New("O campo nome está vazio")
 	ErrorEmptyImageUrl = errors.New("URL da imagem está vazio")
+	ErrorEmptyLink     = errors.New("Link está vazio")
 )
 
 type ShortcutType string
@@ -30,7 +32,7 @@ const (
 	InternalLink ShortcutType = "INTERNAL_LINK"
 )
 
-func NewShortcut(name, imageUrl string, shortcutType ShortcutType) (*Shortcut, error) {
+func NewShortcut(name, imageUrl, link string, shortcutType ShortcutType) (*Shortcut, error) {
 	if strings.TrimSpace(name) == "" {
 		return nil, ErrorEmptyName
 	}
@@ -39,14 +41,19 @@ func NewShortcut(name, imageUrl string, shortcutType ShortcutType) (*Shortcut, e
 		return nil, ErrorEmptyImageUrl
 	}
 
+	if strings.TrimSpace(link) == "" {
+		return nil, ErrorEmptyLink
+	}
+
 	return &Shortcut{
 		Name:         name,
 		ImageUrl:     imageUrl,
+		Link:         link,
 		ShortcutType: shortcutType,
 	}, nil
 }
 
-func (s *Shortcut) UpdateShortcut(name, imageUrl *string) error {
+func (s *Shortcut) UpdateShortcut(name, imageUrl, link *string) error {
 	if name != nil {
 		if strings.TrimSpace(*name) == "" {
 			return ErrorEmptyName
@@ -57,6 +64,10 @@ func (s *Shortcut) UpdateShortcut(name, imageUrl *string) error {
 
 	if imageUrl != nil {
 		s.ImageUrl = *imageUrl
+	}
+
+	if link != nil {
+		s.Link = *link
 	}
 
 	return nil

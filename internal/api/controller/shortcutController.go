@@ -40,6 +40,7 @@ func (c *ShortcutController) Create(ctx *gin.Context) {
 
 	input := dto.ShortcutCreateDTO{
 		Name:         req.Name,
+		Link:         req.Link,
 		ShortcutType: req.ShortcutType,
 		Image:        file,
 	}
@@ -87,6 +88,7 @@ func (c *ShortcutController) Update(ctx *gin.Context) {
 	// Converte para DTO do service
 	input := dto.ShortcutUpdateDTO{
 		Name:  req.Name,
+		Link:  req.Link,
 		Image: imageFile, // pode ser nil
 	}
 
