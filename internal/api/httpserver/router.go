@@ -27,8 +27,8 @@ func NewRouter(
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept", "Cookie"},
+		ExposeHeaders:    []string{"Content-Length", "Set-Cookie"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))

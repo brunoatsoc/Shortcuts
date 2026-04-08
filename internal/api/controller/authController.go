@@ -49,14 +49,14 @@ func (a *AuthController) Login(ctx *gin.Context) {
 }
 
 func (a *AuthController) setAccessTokenCookie(ctx *gin.Context, token string) {
-	ctx.SetSameSite(http.SameSiteStrictMode) // 👈 deve vir antes do SetCookie
+	ctx.SetSameSite(http.SameSiteLaxMode) // 👈 deve vir antes do SetCookie
 	ctx.SetCookie(
 		"access_token",
 		token,
 		15*60, // 15 minutos em segundos
 		"/",
 		"",
-		true, // Secure: só HTTPS
-		true, // HttpOnly: JS não acessa
+		false, // Secure: só HTTPS
+		true,  // HttpOnly: JS não acessa
 	)
 }

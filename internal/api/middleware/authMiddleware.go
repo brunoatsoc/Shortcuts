@@ -4,7 +4,6 @@ import (
 	"intellisys-backend/internal/domain/user"
 	"intellisys-backend/internal/infra/security"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,15 +22,17 @@ func NewAuthMidware(jwtService *security.JWTService, userService *user.UserServi
 
 func (a *AuthMidware) AuthenticationMidware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
+		/*authHeader := c.GetHeader("Authorization")
 
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token não fornecido"})
 			return
-		}
+		}*/
 
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		claims, err := a.jwtService.ValidateToken(tokenString)
+		authCookie, err := c.Cookie("access_token")
+
+		//tokenString := strings.TrimPrefix(authCookie, "Bearer ")
+		claims, err := a.jwtService.ValidateToken(authCookie)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token inválido"})
