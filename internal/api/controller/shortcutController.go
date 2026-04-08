@@ -4,6 +4,7 @@ import (
 	"intellisys-backend/internal/api/dto"
 	"intellisys-backend/internal/domain/shortcut"
 	"io"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,14 +30,18 @@ func (c *ShortcutController) Create(ctx *gin.Context) {
 		return
 	}
 
-	file, err := req.Image.Open()
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": "erro ao abrir imagem",
-		})
-		return
+	var file multipart.File
+	if req.Image != nil && req.Image.Size != 0 {
+		var err error
+		file, err = req.Image.Open()
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "erro ao abrir imagem",
+			})
+			return
+		}
+		defer file.Close()
 	}
-	defer file.Close()
 
 	input := dto.ShortcutCreateDTO{
 		Name:         req.Name,
