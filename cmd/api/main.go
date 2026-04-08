@@ -26,6 +26,7 @@ func main() {
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
 					go server.Start()
+					log.Info("Servidor iniciando...")
 					return nil
 				},
 				OnStop: func(ctx context.Context) error {

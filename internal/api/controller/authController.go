@@ -3,6 +3,7 @@ package controller
 import (
 	"intellisys-backend/internal/api/dto"
 	"intellisys-backend/internal/domain/user"
+	"intellisys-backend/internal/infra/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +11,13 @@ import (
 
 type AuthController struct {
 	authService *user.AuthService
+	expireTime  int64
 }
 
-func NewAuthController(authService *user.AuthService) *AuthController {
+func NewAuthController(authService *user.AuthService, cfg *config.Config) *AuthController {
 	return &AuthController{
 		authService: authService,
+		expireTime:  cfg.JWT.ExpireTime,
 	}
 }
 
@@ -49,11 +52,11 @@ func (a *AuthController) Login(ctx *gin.Context) {
 }
 
 func (a *AuthController) setAccessTokenCookie(ctx *gin.Context, token string) {
-	ctx.SetSameSite(http.SameSiteLaxMode) // 👈 deve vir antes do SetCookie
+	ctx.SetSameSite(http.SameSiteLaxMode)
 	ctx.SetCookie(
 		"access_token",
 		token,
-		15*60, // 15 minutos em segundos
+		int(a.expireTime)*60,
 		"/",
 		"",
 		false, // Secure: só HTTPS

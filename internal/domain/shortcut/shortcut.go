@@ -37,10 +37,6 @@ func NewShortcut(name, imageUrl, link string, shortcutType ShortcutType) (*Short
 		return nil, ErrorEmptyName
 	}
 
-	if strings.TrimSpace(imageUrl) == "" {
-		return nil, ErrorEmptyImageUrl
-	}
-
 	if strings.TrimSpace(link) == "" {
 		return nil, ErrorEmptyLink
 	}
@@ -55,10 +51,6 @@ func NewShortcut(name, imageUrl, link string, shortcutType ShortcutType) (*Short
 
 func (s *Shortcut) UpdateShortcut(name, imageUrl, link *string) error {
 	if name != nil {
-		if strings.TrimSpace(*name) == "" {
-			return ErrorEmptyName
-		}
-
 		s.Name = *name
 	}
 
