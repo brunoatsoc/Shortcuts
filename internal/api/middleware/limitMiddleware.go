@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -58,19 +57,21 @@ func RateLimitMiddleware() gin.HandlerFunc {
 }
 
 func getClientKey(c *gin.Context) string {
-	authHeader := c.GetHeader("Authorization")
+	authCookie, err := c.Cookie("access_token")
 
-	if after, ok := strings.CutPrefix(authHeader, "Bearer "); ok {
-		tokenStr := after
-		token, _, err := new(jwt.Parser).ParseUnverified(tokenStr, jwt.MapClaims{})
+	if err != nil || authCookie == "" {
+		return c.ClientIP()
+	}
 
-		if err == nil {
-			if claims, ok := token.Claims.(jwt.MapClaims); ok {
-				if sub, exists := claims["sub"]; exists {
-					if subStr, ok := sub.(string); ok {
-						return subStr
-					}
-				}
+	token, _, err := new(jwt.Parser).ParseUnverified(authCookie, jwt.MapClaims{})
+	if err != nil {
+		return c.ClientIP()
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if userId, exists := claims["user_id"]; exists {
+			if idStr, ok := userId.(string); ok {
+				return idStr
 			}
 		}
 	}
