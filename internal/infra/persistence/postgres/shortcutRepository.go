@@ -133,8 +133,8 @@ func (r *ShortcutRepository) Update(ctx context.Context, shortcut *shortcut.Shor
 		ctx,
 		query,
 		shortcut.Name,
-		shortcut.Link,
 		shortcut.ImageUrl,
+		shortcut.Link,
 		string(shortcut.ShortcutType),
 		shortcut.Id,
 	)
