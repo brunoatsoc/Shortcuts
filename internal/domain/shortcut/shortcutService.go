@@ -178,11 +178,17 @@ func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutR
 	s.log.Info("Iterando pelos shortcuts obtidos do banco de dados")
 
 	for _, sc := range shortcuts {
+		var imageURL string
+
+		if sc.ImageUrl != "" {
+			imageURL = s.urlServer + "/uploads/" + sc.ImageUrl
+		}
+
 		response = append(response, &dto.ShortcutResponseDTO{
 			Id:       sc.Id.String(),
 			Name:     sc.Name,
 			Link:     sc.Link,
-			ImageURL: s.urlServer + "/uploads/" + sc.ImageUrl,
+			ImageURL: imageURL,
 		})
 	}
 
