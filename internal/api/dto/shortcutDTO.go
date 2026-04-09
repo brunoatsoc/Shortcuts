@@ -32,8 +32,9 @@ type ShortcutUpdateDTO struct {
 }
 
 type ShortcutResponseDTO struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	ImageURL string `json:"image_url"`
-	Link     string `json:"link"`
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	ShortcutType string `json:"shortcut_type"`
+	ImageURL     string `json:"image_url"`
+	Link         string `json:"link"`
 }

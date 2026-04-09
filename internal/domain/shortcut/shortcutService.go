@@ -185,10 +185,11 @@ func (s *ShortcutService) GetAllShortcuts(ctx context.Context) ([]*dto.ShortcutR
 		}
 
 		response = append(response, &dto.ShortcutResponseDTO{
-			Id:       sc.Id.String(),
-			Name:     sc.Name,
-			Link:     sc.Link,
-			ImageURL: imageURL,
+			Id:           sc.Id.String(),
+			Name:         sc.Name,
+			ShortcutType: string(sc.ShortcutType),
+			Link:         sc.Link,
+			ImageURL:     imageURL,
 		})
 	}
 
