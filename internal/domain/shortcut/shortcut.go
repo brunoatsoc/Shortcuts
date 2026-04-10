@@ -3,6 +3,8 @@ package shortcut
 import (
 	"errors"
 	"fmt"
+	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -74,4 +76,49 @@ func ParseShortcutType(shortcutType string) (ShortcutType, error) {
 	default:
 		return "", fmt.Errorf("tipo de shortcut não encontrado")
 	}
+}
+
+func validateURL(rawURL string) error {
+	if len(rawURL) >= 2000 {
+		return fmt.Errorf("url muito longa")
+	}
+
+	parsed, err := url.ParseRequestURI(rawURL)
+	if err != nil {
+		return fmt.Errorf("formato de URL invalido")
+	}
+
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return errors.New("apenas URLs http:// ou https:// são permitidas")
+	}
+
+	if parsed.Host == "" {
+		return errors.New("URL sem host válido")
+	}
+
+	if strings.ContainsAny(rawURL, " \t\n") {
+		return errors.New("URL contém espaços inválidos")
+	}
+
+	return nil
+}
+
+func validateName(name string) error {
+	var validNameRegex = regexp.MustCompile(`^[\p{L}\p{N}\s\-_.,!?()']+$`)
+
+	name = strings.TrimSpace(name)
+
+	if name == "" {
+		return errors.New("nome não pode ser vazio")
+	}
+
+	if len([]rune(name)) > 30 {
+		return errors.New("nome muito longo, máximo 100 caracteres")
+	}
+
+	if !validNameRegex.MatchString(name) {
+		return errors.New("nome contém caracteres inválidos")
+	}
+
+	return nil
 }
