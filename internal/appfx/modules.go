@@ -51,7 +51,20 @@ var APIModule = fx.Module("api",
 		controller.NewUserController,
 		controller.NewAuthController,
 		middleware.NewAuthMidware,
-		fx.Annotate(httpserver.NewRouter, fx.As(new(http.Handler))),
+		fx.Annotate(
+			httpserver.NewRouter,
+			fx.As(new(http.Handler)),
+			fx.ResultTags(
+				``, // ShortcutController
+				``, // UserController
+				``, // AuthController
+				``, // AuthMidware
+				``, // Config
+				``, // Logger
+				`name:"globalLimiter"`,
+				`name:"loginLimiter"`,
+			),
+		),
 		httpserver.NewServer,
 	),
 )
@@ -65,5 +78,18 @@ var FileModlule = fx.Module("file",
 var LogglerModule = fx.Module("logger",
 	fx.Provide(
 		fx.Annotate(logger.NewLogger, fx.As(new(log.Logger))),
+	),
+)
+
+var RateLimitModule = fx.Module("ratelimit",
+	fx.Provide(
+		fx.Annotate(
+			middleware.NewGlobalRateLimiter,
+			fx.ResultTags(`name:"globalLimiter"`),
+		),
+		fx.Annotate(
+			middleware.NewLoginRateLimiter,
+			fx.ResultTags(`name:"loginLimiter"`),
+		),
 	),
 )

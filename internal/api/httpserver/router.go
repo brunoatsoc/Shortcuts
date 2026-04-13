@@ -10,19 +10,26 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/fx"
 )
 
-func NewRouter(
-	shortcutController *controller.ShortcutController,
-	userConstroller *controller.UserController,
-	authController *controller.AuthController,
-	authMiddleware *middleware.AuthMidware,
-	cfg *config.Config,
-	log log.Logger,
-) *gin.Engine {
+type RouterParams struct {
+	fx.In
+
+	ShortcutController *controller.ShortcutController
+	UserController     *controller.UserController
+	AuthController     *controller.AuthController
+	AuthMiddleware     *middleware.AuthMidware
+	Cfg                *config.Config
+	Log                log.Logger
+	GlobalLimiter      *middleware.RateLimiter `name:"globalLimiter"`
+	LoginLimiter       *middleware.RateLimiter `name:"loginLimiter"`
+}
+
+func NewRouter(p RouterParams) *gin.Engine {
 	router := gin.Default()
 
-	router.Static("/uploads", cfg.FalePath.Path)
+	router.Static("/uploads", p.Cfg.FalePath.Path)
 
 	// Para produção com APACHE essa configuração de CORs deve ser comentada
 	router.Use(cors.New(cors.Config{
@@ -34,12 +41,12 @@ func NewRouter(
 		MaxAge:           12 * time.Hour,
 	}))
 
-	router.Use(middleware.RateLimitMiddleware())
-	router.Use(middleware.LoggingMiddleware(log))
+	router.Use(p.GlobalLimiter.Middleware())
+	router.Use(middleware.LoggingMiddleware(p.Log))
 
-	setupShortcutRoutes(router, shortcutController, authMiddleware)
-	setupUsuarioRoutes(router, userConstroller, authMiddleware)
-	setupAuthRoutes(router, authController)
+	setupShortcutRoutes(router, p.ShortcutController, p.AuthMiddleware)
+	setupUsuarioRoutes(router, p.UserController, p.AuthMiddleware)
+	setupAuthRoutes(router, p.AuthController, p.LoginLimiter)
 
 	return router
 }
@@ -87,12 +94,13 @@ func setupUsuarioRoutes(
 func setupAuthRoutes(
 	router *gin.Engine,
 	authController *controller.AuthController,
+	loginLimiter *middleware.RateLimiter,
 ) {
 	v1 := router.Group("/api/v1")
 	{
 		authRoutes := v1.Group("/auth")
 		{
-			authRoutes.POST("/login", authController.Login)
+			authRoutes.POST("/login", loginLimiter.Middleware(), authController.Login)
 		}
 	}
 }
