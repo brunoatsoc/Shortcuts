@@ -78,7 +78,7 @@ func (r *ShortcutRepository) FindAll(ctx context.Context) ([]*shortcut.Shortcut,
 	query := `
 		SELECT id, name, link, image_url, shortcut_type, created_at, updated_at
 		FROM shortcuts
-		ORDER BY created_at DESC
+		ORDER BY created_at ASC
 	`
 
 	rows, err := r.pool.Query(ctx, query)
