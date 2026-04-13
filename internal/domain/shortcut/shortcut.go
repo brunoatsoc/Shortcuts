@@ -22,9 +22,9 @@ type Shortcut struct {
 }
 
 var (
-	ErrorEmptyName     = errors.New("O campo nome está vazio")
+	ErrorInvalidName   = errors.New("O campo invalido")
 	ErrorEmptyImageUrl = errors.New("URL da imagem está vazio")
-	ErrorEmptyLink     = errors.New("Link está vazio")
+	ErrorInvalidLink   = errors.New("Link invalido")
 )
 
 type ShortcutType string
@@ -35,12 +35,12 @@ const (
 )
 
 func NewShortcut(name, imageUrl, link string, shortcutType ShortcutType) (*Shortcut, error) {
-	if strings.TrimSpace(name) == "" {
-		return nil, ErrorEmptyName
+	if err := validateName(name); err != nil {
+		return nil, ErrorInvalidName
 	}
 
-	if strings.TrimSpace(link) == "" {
-		return nil, ErrorEmptyLink
+	if err := validateLink(link); err != nil {
+		return nil, ErrorInvalidLink
 	}
 
 	return &Shortcut{
@@ -53,10 +53,16 @@ func NewShortcut(name, imageUrl, link string, shortcutType ShortcutType) (*Short
 
 func (s *Shortcut) UpdateShortcut(name, imageUrl, link *string) error {
 	if name != nil {
+		if err := validateName(*name); err != nil {
+			return ErrorInvalidName
+		}
 		s.Name = *name
 	}
 
 	if imageUrl != nil {
+		if err := validateLink(*link); err != nil {
+			return ErrorInvalidLink
+		}
 		s.ImageUrl = *imageUrl
 	}
 
@@ -78,7 +84,7 @@ func ParseShortcutType(shortcutType string) (ShortcutType, error) {
 	}
 }
 
-func validateURL(rawURL string) error {
+func validateLink(rawURL string) error {
 	if len(rawURL) >= 2000 {
 		return fmt.Errorf("url muito longa")
 	}
