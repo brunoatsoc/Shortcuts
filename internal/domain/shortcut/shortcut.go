@@ -59,15 +59,15 @@ func (s *Shortcut) UpdateShortcut(name, imageUrl, link *string) error {
 		s.Name = *name
 	}
 
-	if imageUrl != nil {
+	if link != nil {
 		if err := validateLink(*link); err != nil {
 			return ErrorInvalidLink
 		}
-		s.ImageUrl = *imageUrl
+		s.Link = *link
 	}
 
-	if link != nil {
-		s.Link = *link
+	if imageUrl != nil {
+		s.ImageUrl = *imageUrl
 	}
 
 	return nil
@@ -119,7 +119,7 @@ func validateName(name string) error {
 	}
 
 	if len([]rune(name)) > 30 {
-		return errors.New("nome muito longo, máximo 100 caracteres")
+		return errors.New("nome muito longo, máximo 30 caracteres")
 	}
 
 	if !validNameRegex.MatchString(name) {
